@@ -1,0 +1,46 @@
+% inicia a pergunta
+inicio:- write("Bem-vindo ao jogo dos animais. Vou tentar adivinhar qual esta pensando"),
+    nl,
+    comeca(raiz),
+    percorre(raiz,_).
+
+% seleciona uma resposta
+resposta(A) :- random(0,2,X), ((A=s,X=1,!);(A=n,X=0,!)).
+
+% main loop
+ola :- resposta(A),
+        nl,
+        write('Advinhe minha resposta, responderei sim ou nao? (s p/ sim, n para nao e q para sair)'),nl,
+        write('Nao esqueca de finalizar sua resposta com . ex: s. ou n.'),nl,
+        inicio,
+        read(X),
+        nl,
+        (
+            (X = 'q', write("ate breve!"), !, fail);
+            (A = X, write("Voce acertou!"), nl, ola,!);
+            (A \= X, write("Voce errou!"), nl, ola,!)
+         ).
+
+% definindo estrutura inicial das perguntas
+raiz('Eh um mamifero?').
+pergunta_esquerda_sim('Eh um mamifero?','Possui listras?').
+pergunta_esquerda_sim('Eh um passaro?','Ele voa?').
+pergunta_direita_nao('Eh um mamifero?','Eh um passaro?').
+
+animal_esquerda_sim('Possui listras?','Eh uma zebra?').
+animal_direita_nao('Possui listras?','Eh um leao?').
+animal_esquerda_sim('Ele voa?', 'Eh uma aguia?').
+animal_direita_nao('Ele voa?', 'Eh um pinguim?').
+animal_direita_nao('Eh um passaro?', 'Eh um lagarto?').
+
+% definindo regra para percorrer perguntas da arvore
+percorre(Atual,Proximo):-
+    write(Atual),
+    nl,
+    read(X),
+    nl,
+    (
+        (X=s, pergunta_esquerda_sim(Atual,Proximodoatual),percorre(Proximodoatual,Proximo));
+        (X=n, pergunta_direita_nao(Atual,Proximodoatual),percorre(Proximodoatual,Proximo));
+    ).
+
